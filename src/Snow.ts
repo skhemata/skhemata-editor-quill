@@ -1,4 +1,4 @@
-import { css } from 'lit-element';
+import { css } from '@skhemata/skhemata-base';
 
 export const Snow = css`
 /*!

@@ -1,18 +1,19 @@
-import { html, LitElement, property } from 'lit-element';
+import { html, SkhemataBase, property, CSSResult } from '@skhemata/skhemata-base';
 import Quill from 'quill';
-import Delta from './delta/src/Delta';
+import Delta from 'quill-delta';
 import { Snow } from './Snow';
 
-export class SkhemataEditorQuill extends LitElement {
+export class SkhemataEditorQuill extends SkhemataBase {
   static get styles() {
-    return [
+    return <CSSResult[]> [
       Snow
-  ]
+    ];
   }
 
   @property({ type: Element }) quill: any = null;
 
-  firstUpdated(){
+  async firstUpdated(){
+    super.firstUpdated();
     const element = <Element>this.shadowRoot?.getElementById('editor');
     this.quill = new Quill(element, {
       modules: { toolbar: true },

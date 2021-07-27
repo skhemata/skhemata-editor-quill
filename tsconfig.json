@@ -15,7 +15,7 @@
     "inlineSources": false,
     "rootDir": "./",
     "declaration": true,
-    "incremental": true,
+    "incremental": false,
     "allowJs": true,
     "typeRoots": [
       "types/*"

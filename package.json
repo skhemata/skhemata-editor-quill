@@ -16,12 +16,12 @@
     "web component"
   ],
   "scripts": {
-    "start": "concurrently --kill-others --names tsc,web-dev-server \"npm run tsc:watch\" \"web-dev-server --app-index demo/index.html --node-resolve --open --watch\"",
-    "start:rollup": "rimraf dist && concurrently -k -r \"rollup -c -w\" \"wds\"",
+    "start:tsc": "concurrently --kill-others --names tsc,web-dev-server \"npm run tsc:watch\" \"web-dev-server --app-index demo/index.html --node-resolve --open --watch\"",
+    "start": "rimraf dist && concurrently -k -r \"rollup -c -w\" \"wds\"",
     "tsc:watch": "tsc --watch",
-    "build:typescript": "tsc",
+    "build:tsc": "tsc",
     "build": "rimraf dist && rollup -c",
-    "prepublish": "tsc",
+    "prepare": "tsc",
     "lint": "eslint --ext .ts,.html . --ignore-path .gitignore && prettier \"**/*.ts\" --check --ignore-path .gitignore",
     "format": "eslint --ext .ts,.html . --fix --ignore-path .gitignore && prettier \"**/*.ts\" --write --ignore-path .gitignore",
     "test": "tsc && wtr --coverage",
@@ -30,9 +30,7 @@
     "storybook:build": "tsc && build-storybook"
   },
   "dependencies": {
-    "lit-element": "^2.4.0",
-    "lit-html": "^1.3.0",
-    "loadash": "^1.0.0",
+    "@skhemata/skhemata-base": "^1.1.1-0",
     "lodash.isequal": "^4.5.0",
     "lodash.merge": "^4.6.2",
     "quill": "^1.3.7",

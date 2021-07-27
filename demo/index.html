@@ -12,8 +12,10 @@
   <div id="demo"></div>
 
   <script type="module">
-    import { html, render } from 'lit-html';
-    import '../dist/skhemata-editor-quill.js';
+    import { html, render } from '@skhemata/skhemata-base';
+    import { SkhemataEditorQuill } from '../dist/index.js';
+
+    customElements.define('skhemata-editor-quill', SkhemataEditorQuill)
 
     render(
       html`

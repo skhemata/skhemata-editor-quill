@@ -1,4 +1,4 @@
-import { html, TemplateResult } from 'lit-html';
+import { html, TemplateResult } from '@skhemata/skhemata-base';
 import '../skhemata-editor-quill.js';
 
 export default {
