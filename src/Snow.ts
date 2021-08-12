@@ -1,6 +1,6 @@
-import { css } from '@skhemata/skhemata-base';
+import { css, CSSResult } from '@skhemata/skhemata-base';
 
-export const Snow = css`
+export const Snow = <CSSResult> css`
 /*!
  * Quill Editor v1.0.0
  * https://quilljs.com/
