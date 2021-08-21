@@ -30,6 +30,7 @@
     "storybook:build": "tsc && build-storybook"
   },
   "dependencies": {
+    "@skhemata/skhemata-api-client-js": "^1.3.0",
     "@skhemata/skhemata-base": "^1.1.1-0",
     "lodash.isequal": "^4.5.0",
     "lodash.merge": "^4.6.2",

@@ -16,10 +16,14 @@
     import { SkhemataEditorQuill } from '../dist/index.js';
 
     customElements.define('skhemata-editor-quill', SkhemataEditorQuill)
-
+    
+    const api = {
+      url: 'https://coral.thrinacia.com/api/service/restv1',
+      base: 'https://coral.thrinacia.com/api'
+    };
     render(
       html`
-        <skhemata-editor-quill>
+        <skhemata-editor-quill .api=${api} campaignId=3>
         </skhemata-editor-quill>
       `,
       document.querySelector('#demo')
