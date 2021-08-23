@@ -66,12 +66,14 @@ export class SkhemataEditorQuill extends SkhemataBase {
                 fileInput.classList.add('ql-image');
                 fileInput.addEventListener('change', () => {
                   if (fileInput.files != null && fileInput.files[0] != null) {
+                    const newThis = this;
 
                     // determine whether to save image to API or use default base64 rendering functionality
                     if(campaign && api.url) {
                       const formData = new FormData();
                       formData.append('resource_content_type', 'image');
                       formData.append('entry_id', '2');
+                      formData.append('region_id', '2');
                       formData.append('resource_type', 'file');
                       formData.append('X-Requested-With', 'xhr');
                       formData.append('resource', fileInput.files[0]);
@@ -86,13 +88,14 @@ export class SkhemataEditorQuill extends SkhemataBase {
                         if (xhr.status === 200) {
                           const res = JSON.parse(xhr.responseText);
                           const imgUrl = `${api['base']}/static/images/${res.path_external}`
-                          const range = this.quill.getSelection();
-                          this.quill.insertEmbed(range.index, 'image', imgUrl);
+                          const range = newThis.quill.getSelection(true);
+                          newThis.quill.insertEmbed(range.index, 'image', imgUrl);
+                          newThis.quill.setSelection(range.index + 1, 'silent');
+
                         }
                       };
                       xhr.send(formData);
                     } else {
-                      const newThis = this;
                       var reader = new FileReader();
                       reader.onload = function (e) {
                         var range = newThis.quill.getSelection(true);
