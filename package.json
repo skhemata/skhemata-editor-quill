@@ -1,6 +1,6 @@
 {
   "name": "@skhemata/skhemata-editor-quill",
-  "version": "0.1.4",
+  "version": "0.2.0",
   "description": "Skhemata Quill Editor Web Component. This web component provides bindings for wysiwyg quill editor.",
   "author": "skhemata-editor-quill",
   "main": "dist/index.js",
