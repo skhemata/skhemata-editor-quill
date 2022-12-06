@@ -1,3 +1,4 @@
+/* eslint-disable func-names */
 import { html, SkhemataBase, property, CSSResult,css } from '@skhemata/skhemata-base';
 import Quill from 'quill';
 import Delta from 'quill-delta';
@@ -5,11 +6,16 @@ import { Campaign } from '@skhemata/skhemata-api-client-js/dist/src/Campaign';
 import { Skhemata } from '@skhemata/skhemata-api-client-js';
 
 import { Snow } from './Snow';
+
 export class SkhemataEditorQuill extends SkhemataBase {
 
   @property({ type: Campaign }) campaign?: Campaign;
 
-  @property({ type: String}) campaignId;
+  @property({ type: Number}) campaignId: number;
+  
+  @property({ type: Object}) api: { url: string; base: string; };
+
+  
   static get styles() {
     return <CSSResult[]> [
       Snow,
@@ -26,9 +32,9 @@ export class SkhemataEditorQuill extends SkhemataBase {
   async firstUpdated(){
     super.firstUpdated();
     const element = <Element>this.shadowRoot?.getElementById('editor');
-    const campaignId = this.campaignId;
-    const api = this.api;
-    let campaign = this.campaign;
+    const {campaignId} = this;
+    const {api} = this;
+    let {campaign} = this;
     // Init skhemata auth
     if(!this.campaign && this.api.url){
       this.skhemata = new Skhemata(this.api.url);
@@ -77,7 +83,7 @@ export class SkhemataEditorQuill extends SkhemataBase {
                       formData.append('resource_type', 'file');
                       formData.append('X-Requested-With', 'xhr');
                       formData.append('resource', fileInput.files[0]);
-                      let url = `${api.url}/campaign/${campaignId}/resource/file/`;
+                      const url = `${api.url}/campaign/${campaignId}/resource/file/`;
                       
                       const xhr = new XMLHttpRequest();
                       xhr.open('post', url, true);
@@ -87,7 +93,7 @@ export class SkhemataEditorQuill extends SkhemataBase {
 
                         if (xhr.status === 200) {
                           const res = JSON.parse(xhr.responseText);
-                          const imgUrl = `${api['base']}/static/images/${res.path_external}`
+                          const imgUrl = `${api.base}/static/images/${res.path_external}`
                           const range = newThis.quill.getSelection(true);
                           newThis.quill.insertEmbed(range.index, 'image', imgUrl);
                           newThis.quill.setSelection(range.index + 1, 'silent');
@@ -96,9 +102,9 @@ export class SkhemataEditorQuill extends SkhemataBase {
                       };
                       xhr.send(formData);
                     } else {
-                      var reader = new FileReader();
+                      const reader = new FileReader();
                       reader.onload = function (e) {
-                        var range = newThis.quill.getSelection(true);
+                        const range = newThis.quill.getSelection(true);
 
                         newThis.quill.updateContents(new Delta().retain(range.index).delete(range.length).insert({ image: e.target.result }));
                         newThis.quill.setSelection(range.index + 1, 'silent');
