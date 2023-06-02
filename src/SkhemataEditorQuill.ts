@@ -1,5 +1,11 @@
 /* eslint-disable func-names */
-import { html, SkhemataBase, property, CSSResult,css } from '@skhemata/skhemata-base';
+import {
+  html,
+  SkhemataBase,
+  property,
+  CSSResult,
+  css,
+} from '@skhemata/skhemata-base';
 import Quill from 'quill';
 import Delta from 'quill-delta';
 import { Campaign } from '@skhemata/skhemata-api-client-js/dist/src/Campaign';
@@ -8,60 +14,61 @@ import { Skhemata } from '@skhemata/skhemata-api-client-js';
 import { Snow } from './Snow';
 
 export class SkhemataEditorQuill extends SkhemataBase {
-
   @property({ type: Campaign }) campaign?: Campaign;
 
-  @property({ type: Number}) campaignId: number;
-  
-  @property({ type: Object}) api: { url: string; base: string; };
+  @property({ type: Number }) campaignId: number;
 
-  
+  @property({ type: Object }) declare api: { url: string; base: string };
+
   static get styles() {
-    return <CSSResult[]> [
+    return <CSSResult[]>[
       Snow,
       css`
-      .ql-editor {
-        height: 250px;
-      }
-      `
+        .ql-editor {
+          height: 250px;
+        }
+      `,
     ];
   }
 
   @property({ type: Element }) quill: any = null;
 
-  async firstUpdated(){
+  async firstUpdated() {
     super.firstUpdated();
     const element = <Element>this.shadowRoot?.getElementById('editor');
-    const {campaignId} = this;
-    const {api} = this;
-    let {campaign} = this;
+    const { campaignId } = this;
+    const { api } = this;
+    let { campaign } = this;
     // Init skhemata auth
-    if(!this.campaign && this.api.url){
+    if (!this.campaign && this.api.url) {
       this.skhemata = new Skhemata(this.api.url);
-      await this.skhemata.init()
-        if(this.campaignId && this.skhemata.api.authToken){
-          campaign = await this.skhemata?.getCampaign(this.campaignId);
-          this.campaign = campaign;
-        }
-    } 
+      await this.skhemata.init();
+      if (this.campaignId && this.skhemata.api.authToken) {
+        campaign = await this.skhemata?.getCampaign(this.campaignId);
+        this.campaign = campaign;
+      }
+    }
 
     this.quill = new Quill(element, {
-      modules: { 
+      modules: {
         toolbar: {
           container: [
-            [{ 'header': [1, 2, 3, 4, 5, 6, false] }],
-            ['bold', 'italic', 'underline', 'strike'],        // toggled buttons
+            [{ header: [1, 2, 3, 4, 5, 6, false] }],
+            ['bold', 'italic', 'underline', 'strike'], // toggled buttons
             ['blockquote', 'code-block'],
-          
-            [{ 'list': 'ordered'}, { 'list': 'bullet' }],
-            [{ 'indent': '-1'}, { 'indent': '+1' }],          // outdent/indent
-            [{ 'direction': 'rtl' }],                         // text direction
-            
-            [{ 'align': [] }],['image']
+
+            [{ list: 'ordered' }, { list: 'bullet' }],
+            [{ indent: '-1' }, { indent: '+1' }], // outdent/indent
+            [{ direction: 'rtl' }], // text direction
+
+            [{ align: [] }],
+            ['image'],
           ],
           handlers: {
-            'image': function () {
-              let fileInput = this.container.querySelector('input.ql-image[type=file]');
+            image: function () {
+              let fileInput = this.container.querySelector(
+                'input.ql-image[type=file]'
+              );
               if (fileInput == null) {
                 fileInput = document.createElement('input');
                 fileInput.setAttribute('type', 'file');
@@ -75,7 +82,7 @@ export class SkhemataEditorQuill extends SkhemataBase {
                     const newThis = this;
 
                     // determine whether to save image to API or use default base64 rendering functionality
-                    if(campaign && api.url) {
+                    if (campaign && api.url) {
                       const formData = new FormData();
                       formData.append('resource_content_type', 'image');
                       formData.append('entry_id', '2');
@@ -84,20 +91,25 @@ export class SkhemataEditorQuill extends SkhemataBase {
                       formData.append('X-Requested-With', 'xhr');
                       formData.append('resource', fileInput.files[0]);
                       const url = `${api.url}/campaign/${campaignId}/resource/file/`;
-                      
+
                       const xhr = new XMLHttpRequest();
                       xhr.open('post', url, true);
-                      xhr.setRequestHeader('x-auth-token', campaign?.api.authToken)
+                      xhr.setRequestHeader(
+                        'x-auth-token',
+                        campaign?.api.authToken
+                      );
 
                       xhr.onload = () => {
-
                         if (xhr.status === 200) {
                           const res = JSON.parse(xhr.responseText);
-                          const imgUrl = `${api.base}/static/images/${res.path_external}`
+                          const imgUrl = `${api.base}/static/images/${res.path_external}`;
                           const range = newThis.quill.getSelection(true);
-                          newThis.quill.insertEmbed(range.index, 'image', imgUrl);
+                          newThis.quill.insertEmbed(
+                            range.index,
+                            'image',
+                            imgUrl
+                          );
                           newThis.quill.setSelection(range.index + 1, 'silent');
-
                         }
                       };
                       xhr.send(formData);
@@ -106,12 +118,16 @@ export class SkhemataEditorQuill extends SkhemataBase {
                       reader.onload = function (e) {
                         const range = newThis.quill.getSelection(true);
 
-                        newThis.quill.updateContents(new Delta().retain(range.index).delete(range.length).insert({ image: e.target.result }));
+                        newThis.quill.updateContents(
+                          new Delta()
+                            .retain(range.index)
+                            .delete(range.length)
+                            .insert({ image: e.target.result })
+                        );
                         newThis.quill.setSelection(range.index + 1, 'silent');
-                        fileInput.value = "";
+                        fileInput.value = '';
                       };
                       reader.readAsDataURL(fileInput.files[0]);
-
                     }
                   }
                 });
@@ -119,23 +135,21 @@ export class SkhemataEditorQuill extends SkhemataBase {
                 this.container.appendChild(fileInput);
               }
               fileInput.click();
-            }
-          }
-        }         
+            },
+          },
+        },
       },
 
       theme: 'snow',
     });
   }
 
-  setContents(contents: any){
+  setContents(contents: any) {
     const delta = new Delta(contents);
     this.quill.setContents(delta);
   }
 
   render() {
-    return html`
-      <div id="editor"></div>
-    `;
+    return html` <div id="editor"></div> `;
   }
 }
